@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>My Patatat</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./Assets/css/style.css">
+        <script type="text/javascript" src="./Assets/js/lib/paperjs-v0.12.4/dist/paper-full.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.3/howler.core.min.js"></script>
+        
+        <!-- Define inlined PaperScript associate it with myCanvas -->
+ <script type="text/paperscript" canvas="myCanvas">
+ //declare  an array to old circle values so that we can add animations later 
+  var circles = [];
+// Listen for keystrokes using paperscript event handler
+   
+function onKeyDown(event) {
+// Declare variable to make accessing data in the object easier 
+    var pressedKey = event.key;
+
+// Declare sound variable to store sound key at each iteration
+    var keySound = null;
+
+// Declare var to store color from iteration. This is an optional value for future improvement as I'm currently using
+// the generateRgb function below to generate random colors in this version. 
+    var keyColor = null;
+
+// Iterate over the keyData array and generate new circles using paper js methods.  
+    for (var key in keyData) {
+         if(keyData.hasOwnProperty(pressedKey)) {
+           keySound = keyData[pressedKey].sound;
+           keyColor = keyData[pressedKey].color;
+         }
+       }
+        var maxPoint = new Point(view.size.width, view.size.height);
+        var randomPoint = Point.random()
+        var point = maxPoint * randomPoint;
+        var circle = new Path.Circle(point,500);
+        keySound.play();
+        circle.fillColor = generateRgb();
+        circles.push(circle)
+    }
+    
+// Add animation to circles using paper js using the hue and scale method. 
+// Remove used circles after they disappear to avoid using additional memory. 
+    function onFrame(event){
+    for(var i = 0 ; i < circles.length; i++) {
+    circles[i].fillColor.hue +=1;
+    circles[i].scale(.9);
+    if (circles[i].area < 1) {
+    circles[i].remove();
+    circles.splice(i, 1)
+     console.log(circles)
+   }
+  } 
+}
+
+// generateRgb randomly generates colors to be used as the circle's colors. 
+
+    function generateRgb() {
+    var rgb = [];
+    for(var i = 253 ; i < 256; i++) {
+    var color = Math.floor(Math.random()*i);
+    rgb.push(color);
+    }
+  return 'rgb('+rgb[0]+','+rgb[1]+',' +rgb[2]+')';
+}
+</script>
+    <body>
+	<canvas id="myCanvas" resize></canvas>
+        <script src="./Assets/js/script.js" async defer></script>
+    </body>
+</html>
